@@ -28,7 +28,6 @@ An addictive infinite-scroll feed that hijacks Twitter's UX patterns to teach yo
 - 2px borders everywhere — brutalist edge
 - Staggered reveal animations — smooth loading experience
 
-**This isn't "dark mode app" — it's Vogue meets Brutalism meets Wikipedia.**
 
 ## 🚀 Quick Start
 
