@@ -134,4 +134,3 @@ Found a bug? Have a feature request? Open an issue!
 
 **Remember:** The goal isn't to replace news reading — it's to replace mindless scrolling with mindful learning. When you catch yourself reaching for Twitter, open this instead. Same dopamine hit, better outcome.
 
-**Made with ❤︎ and electric lime**
