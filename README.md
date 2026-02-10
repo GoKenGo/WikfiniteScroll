@@ -1,4 +1,4 @@
-# WikifiniteScroll — Casual Scrolling For The Weary Traveler
+# WikfiniteScroll — Casual Scrolling For The Weary Traveler
 
 **Stop doomscrolling. Start learning.**
 
