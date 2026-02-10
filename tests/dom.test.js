@@ -34,12 +34,20 @@ describe('createPost', () => {
         expect(post.id).toBe('post-42');
     });
 
-    test('renders image when thumbnail is provided', () => {
+    test('renders image with lazy loading by default', () => {
         const post = app.createPost(mockWikiData());
         const img = post.querySelector('.post-image');
         expect(img.tagName).toBe('IMG');
         expect(img.src).toBe('https://upload.wikimedia.org/test.jpg');
         expect(img.getAttribute('loading')).toBe('lazy');
+    });
+
+    test('renders image with fetchpriority="high" when eager', () => {
+        const post = app.createPost(mockWikiData(), true);
+        const img = post.querySelector('.post-image');
+        expect(img.tagName).toBe('IMG');
+        expect(img.getAttribute('fetchpriority')).toBe('high');
+        expect(img.getAttribute('loading')).toBeNull();
     });
 
     test('renders gradient placeholder when no thumbnail', () => {

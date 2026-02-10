@@ -56,6 +56,17 @@ describe('loadPosts', () => {
         expect(posts).toHaveLength(3);
     });
 
+    test('fetches all articles in parallel via Promise.all', async () => {
+        const mockFetch = createMockFetch(mockApiResponse);
+        const promise = app.loadPosts(5, mockFetch);
+
+        // All 5 fetches should be initiated immediately (parallel)
+        expect(mockFetch).toHaveBeenCalledTimes(5);
+
+        await jest.advanceTimersByTimeAsync(5000);
+        await promise;
+    });
+
     test('updates postCount counter in DOM', async () => {
         const mockFetch = createMockFetch(mockApiResponse);
         const promise = app.loadPosts(2, mockFetch);
@@ -144,5 +155,24 @@ describe('loadPosts', () => {
         await promise2;
 
         expect(document.querySelectorAll('.post')).toHaveLength(2);
+    });
+
+    test('uses eager loading for first 3 posts', async () => {
+        const mockFetch = createMockFetch(mockApiResponse);
+        const promise = app.loadPosts(5, mockFetch);
+        await jest.advanceTimersByTimeAsync(5000);
+        await promise;
+
+        const posts = document.querySelectorAll('.post');
+        // First 3 posts should have fetchpriority="high"
+        for (let i = 0; i < 3; i++) {
+            const img = posts[i].querySelector('.post-image');
+            expect(img.getAttribute('fetchpriority')).toBe('high');
+        }
+        // Posts 4+ should have loading="lazy"
+        for (let i = 3; i < 5; i++) {
+            const img = posts[i].querySelector('.post-image');
+            expect(img.getAttribute('loading')).toBe('lazy');
+        }
     });
 });

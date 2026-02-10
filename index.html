@@ -30,11 +30,12 @@
     <!-- Preconnect to improve font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700;900&family=Space+Mono:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@700;900&family=Space+Mono:wght@400;700&family=Manrope:wght@400&display=swap" rel="stylesheet">
     
     <!-- Preconnect to Wikipedia API -->
-    <link rel="dns-prefetch" href="https://en.wikipedia.org">
+    <link rel="preconnect" href="https://en.wikipedia.org" crossorigin>
     
+    <!-- Critical CSS: header, skeleton loaders, layout -->
     <style>
         :root {
             --black: #000000;
@@ -58,20 +59,6 @@
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             position: relative;
-        }
-
-        /* Grain texture overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.03;
-            pointer-events: none;
-            z-index: 9999;
         }
 
         .container {
@@ -138,6 +125,180 @@
             background: var(--accent);
             color: var(--black);
             transform: translateY(-2px);
+        }
+
+        /* LOADING STATES */
+        .skeleton-post {
+            border: 2px solid var(--border);
+            margin-bottom: 40px;
+            margin-left: 40px;
+        }
+
+        .skeleton-post:nth-child(even) {
+            margin-left: 0;
+            margin-right: 40px;
+        }
+
+        .skeleton-inner {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            height: 200px;
+        }
+
+        .skeleton-image {
+            background: linear-gradient(90deg, #0a0a0a 25%, #1a1a1a 50%, #0a0a0a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+            border-right: 2px solid var(--border);
+        }
+
+        .skeleton-content {
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .skeleton-line {
+            height: 12px;
+            background: linear-gradient(90deg, #0a0a0a 25%, #1a1a1a 50%, #0a0a0a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        .skeleton-line.short {
+            width: 40%;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85em;
+            color: var(--gray);
+            letter-spacing: 0.1em;
+        }
+
+        /* COUNTER BADGE */
+        .counter {
+            background: var(--accent);
+            color: var(--black);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7em;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        /* CRITICAL MOBILE RESPONSIVE */
+        @media (max-width: 900px) {
+            .container {
+                padding: 100px 20px 40px 20px;
+            }
+
+            .header {
+                padding: 16px 20px;
+            }
+
+            .logo {
+                font-size: 1.8em;
+            }
+
+            .skeleton-post,
+            .skeleton-post:nth-child(even) {
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            .skeleton-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .header-right {
+                gap: 16px;
+            }
+
+            .favorites-btn {
+                font-size: 0.8em;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .logo {
+                font-size: 1.4em;
+            }
+
+            .stats {
+                font-size: 0.7em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">SCROLL</div>
+        <div class="header-right">
+            <div class="stats">
+                <span id="postCount">0</span> LEARNED
+            </div>
+            <button class="favorites-btn" onclick="showFavorites()">
+                ❤︎ <span class="counter" id="favCount">0</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container" id="content">
+        <!-- Skeleton loaders -->
+        <div class="skeleton-post">
+            <div class="skeleton-inner">
+                <div class="skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                </div>
+            </div>
+        </div>
+        <div class="skeleton-post">
+            <div class="skeleton-inner">
+                <div class="skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading" id="loading">LOADING MORE...</div>
+    <div class="toast" id="toast"></div>
+
+    <!-- Deferred CSS: post cards, news, toast, decorative elements -->
+    <style>
+        /* Grain texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 9999;
         }
 
         /* POST CARDS */
@@ -233,22 +394,22 @@
             display: inline-block;
         }
 
-        .post.fact .category-tag { 
+        .post.fact .category-tag {
             color: var(--accent);
             border-bottom: 2px solid var(--accent);
             padding-bottom: 4px;
         }
-        .post.person .category-tag { 
+        .post.person .category-tag {
             color: #FF006E;
             border-bottom: 2px solid #FF006E;
             padding-bottom: 4px;
         }
-        .post.history .category-tag { 
+        .post.history .category-tag {
             color: #FFD700;
             border-bottom: 2px solid #FFD700;
             padding-bottom: 4px;
         }
-        .post.science .category-tag { 
+        .post.science .category-tag {
             color: #00F5FF;
             border-bottom: 2px solid #00F5FF;
             padding-bottom: 4px;
@@ -377,63 +538,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* LOADING STATES */
-        .skeleton-post {
-            border: 2px solid var(--border);
-            margin-bottom: 40px;
-            margin-left: 40px;
-        }
-
-        .skeleton-post:nth-child(even) {
-            margin-left: 0;
-            margin-right: 40px;
-        }
-
-        .skeleton-inner {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            height: 200px;
-        }
-
-        .skeleton-image {
-            background: linear-gradient(90deg, #0a0a0a 25%, #1a1a1a 50%, #0a0a0a 75%);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
-            border-right: 2px solid var(--border);
-        }
-
-        .skeleton-content {
-            padding: 28px 32px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .skeleton-line {
-            height: 12px;
-            background: linear-gradient(90deg, #0a0a0a 25%, #1a1a1a 50%, #0a0a0a 75%);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
-        }
-
-        .skeleton-line.short {
-            width: 40%;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.85em;
-            color: var(--gray);
-            letter-spacing: 0.1em;
-        }
-
         /* TOAST */
         .toast {
             position: fixed;
@@ -458,48 +562,17 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* COUNTER BADGE */
-        .counter {
-            background: var(--accent);
-            color: var(--black);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.7em;
-            font-weight: 700;
-            margin-left: 8px;
-        }
-
-        /* MOBILE RESPONSIVE */
+        /* DEFERRED MOBILE RESPONSIVE */
         @media (max-width: 900px) {
-            .container {
-                padding: 100px 20px 40px 20px;
-            }
-
-            .header {
-                padding: 16px 20px;
-            }
-
-            .logo {
-                font-size: 1.8em;
-            }
-
             .post,
             .post:nth-child(odd),
-            .post:nth-child(even),
-            .skeleton-post,
-            .skeleton-post:nth-child(even) {
+            .post:nth-child(even) {
                 margin-left: 0;
                 margin-right: 0;
             }
 
             .post-inner,
-            .post:nth-child(even) .post-inner,
-            .skeleton-inner {
+            .post:nth-child(even) .post-inner {
                 grid-template-columns: 1fr;
             }
 
@@ -529,26 +602,9 @@
             .news-headline {
                 font-size: 1.8em;
             }
-
-            .header-right {
-                gap: 16px;
-            }
-
-            .favorites-btn {
-                font-size: 0.8em;
-                padding: 6px 12px;
-            }
         }
 
         @media (max-width: 500px) {
-            .logo {
-                font-size: 1.4em;
-            }
-
-            .stats {
-                font-size: 0.7em;
-            }
-
             .post-content {
                 font-size: 0.95em;
             }
@@ -558,46 +614,6 @@
             }
         }
     </style>
-</head>
-<body>
-    <div class="header">
-        <div class="logo">SCROLL</div>
-        <div class="header-right">
-            <div class="stats">
-                <span id="postCount">0</span> LEARNED
-            </div>
-            <button class="favorites-btn" onclick="showFavorites()">
-                ❤︎ <span class="counter" id="favCount">0</span>
-            </button>
-        </div>
-    </div>
-
-    <div class="container" id="content">
-        <!-- Skeleton loaders -->
-        <div class="skeleton-post">
-            <div class="skeleton-inner">
-                <div class="skeleton-image"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton-line short"></div>
-                    <div class="skeleton-line"></div>
-                    <div class="skeleton-line"></div>
-                </div>
-            </div>
-        </div>
-        <div class="skeleton-post">
-            <div class="skeleton-inner">
-                <div class="skeleton-image"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton-line short"></div>
-                    <div class="skeleton-line"></div>
-                    <div class="skeleton-line"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="loading" id="loading">LOADING MORE...</div>
-    <div class="toast" id="toast"></div>
 
     <script>
         const RANDOM_API = 'https://en.wikipedia.org/api/rest_v1/page/random/summary';
@@ -729,17 +745,18 @@
             showToast(`${favorites.length} FAVORITE${favorites.length !== 1 ? 'S' : ''} SAVED`);
         }
 
-        function createPost(wikiData) {
+        function createPost(wikiData, eager = false) {
             const category = getRandomCategory();
             const excerpt = truncateText(wikiData.extract, 200);
             const postId = `post-${wikiData.pageid}`;
-            
+
             const post = document.createElement('div');
             post.className = `post ${category}`;
             post.id = postId;
-            
-            const imageHtml = wikiData.thumbnail 
-                ? `<img src="${wikiData.thumbnail}" alt="${wikiData.title}" class="post-image" loading="lazy">` 
+
+            const loadingAttr = eager ? 'fetchpriority="high"' : 'loading="lazy"';
+            const imageHtml = wikiData.thumbnail
+                ? `<img src="${wikiData.thumbnail}" alt="${wikiData.title}" class="post-image" ${loadingAttr}>`
                 : `<div class="post-image" style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);"></div>`;
             
             post.innerHTML = `
@@ -825,32 +842,37 @@
         async function loadPosts(count = 5) {
             if (loading) return;
             loading = true;
-            
+
             if (articlesLoaded === 0) {
                 document.querySelectorAll('.skeleton-post').forEach(el => el.remove());
             }
-            
+
             const container = document.getElementById('content');
-            
-            for (let i = 0; i < count; i++) {
-                const wikiData = await fetchRandomWikipedia();
-                
+
+            // Fetch all articles in parallel instead of sequentially
+            const results = await Promise.all(
+                Array.from({ length: count }, () => fetchRandomWikipedia())
+            );
+
+            // Insert into DOM sequentially for staggered animation
+            for (const wikiData of results) {
                 if (wikiData) {
-                    const post = createPost(wikiData);
+                    const eager = postCount < 3;
+                    const post = createPost(wikiData, eager);
                     container.appendChild(post);
-                    
+
                     postCount++;
                     document.getElementById('postCount').textContent = postCount;
-                    
+
                     if (postCount % 5 === 0) {
                         const newsPost = createNewsPost();
                         container.appendChild(newsPost);
                     }
                 }
-                
+
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
-            
+
             articlesLoaded += count;
             loading = false;
         }

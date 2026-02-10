@@ -133,7 +133,7 @@ function showFavorites() {
     showToast(`${favorites.length} FAVORITE${favorites.length !== 1 ? 'S' : ''} SAVED`);
 }
 
-function createPost(wikiData) {
+function createPost(wikiData, eager = false) {
     const category = getRandomCategory();
     const excerpt = truncateText(wikiData.extract, 200);
     const postId = `post-${wikiData.pageid}`;
@@ -142,8 +142,9 @@ function createPost(wikiData) {
     post.className = `post ${category}`;
     post.id = postId;
 
+    const loadingAttr = eager ? 'fetchpriority="high"' : 'loading="lazy"';
     const imageHtml = wikiData.thumbnail
-        ? `<img src="${wikiData.thumbnail}" alt="${wikiData.title}" class="post-image" loading="lazy">`
+        ? `<img src="${wikiData.thumbnail}" alt="${wikiData.title}" class="post-image" ${loadingAttr}>`
         : `<div class="post-image" style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);"></div>`;
 
     post.innerHTML = `
@@ -236,11 +237,16 @@ async function loadPosts(count = 5, fetchFn = fetch) {
 
     const container = document.getElementById('content');
 
-    for (let i = 0; i < count; i++) {
-        const wikiData = await fetchRandomWikipedia(fetchFn);
+    // Fetch all articles in parallel instead of sequentially
+    const results = await Promise.all(
+        Array.from({ length: count }, () => fetchRandomWikipedia(fetchFn))
+    );
 
+    // Insert into DOM sequentially for staggered animation
+    for (const wikiData of results) {
         if (wikiData) {
-            const post = createPost(wikiData);
+            const eager = postCount < 3;
+            const post = createPost(wikiData, eager);
             container.appendChild(post);
 
             postCount++;
