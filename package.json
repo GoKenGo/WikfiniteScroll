@@ -1,0 +1,14 @@
+{
+  "name": "wikfinite-scroll",
+  "version": "1.0.0",
+  "description": "Casual infinite-scroll feed of random Wikipedia articles",
+  "author": "Kenneth Munoz",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}
